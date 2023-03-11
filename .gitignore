@@ -1,7 +1,9 @@
 # created by virtualenv automatically
 bin/
 lib/
+__pycache__/
 .idea/
 .Python
 pyvenv.cfg
 env.py
+
