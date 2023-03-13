@@ -79,7 +79,7 @@ def profile(username):
     # grab the session user's username from db
     if "user" in session:
         username = mongo.db.users.find_one(
-           {"username": session["user"]})["username"]
+            {"username": session["user"]})["username"]
         return render_template("profile.html", username=username)
 
     return redirect(url_for("login"))
@@ -103,7 +103,8 @@ def add_task():
             "task_description": request.form.get("task_description"),
             "is_urgent": is_urgent,
             "due_date": request.form.get("due_date"),
-            "created_by": session["user"]
+            "created_by": session["user"],
+            "complete": "0"
         }
         mongo.db.tasks.insert_one(new_task)
         flash("Task Successfully Added")
@@ -131,6 +132,20 @@ def edit_task(task_id):
     task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
     categories = list(mongo.db.categories.find().sort("category_name", 1))
     return render_template("edit_task.html", task=task, categories=categories)
+
+
+@app.route("/delete_task/<task_id>")
+def delete_task(task_id):
+    mongo.db.tasks.delete_one({"_id": ObjectId(task_id)})
+    flash("Task successfully deleted")
+    return redirect(url_for("get_tasks"))
+
+
+@app.route("/complete_task/<task_id>")
+def complete_task(task_id):
+    mongo.db.tasks.update_one({"_id": ObjectId(task_id)}, {"$set": {"complete": "1"}})
+    flash("Task completed")
+    return redirect(url_for("get_tasks"))
 
 
 if __name__ == "__main__":
