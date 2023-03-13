@@ -52,3 +52,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+function confirmComplete() {
+    if (confirm("Are you sure you wish to complete this task?")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function confirmDelete() {
+    if (confirm("Are you sure you wish to delete this task?")) {
+        return true;
+    } else {
+        return false;
+    }
+}
