@@ -128,6 +128,7 @@ def edit_task(task_id):
         }
         mongo.db.tasks.update_one({"_id": ObjectId(task_id)}, {"$set": submit})
         flash("Task Successfully Updated")
+        return redirect(url_for("get_tasks"))
 
     task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
     categories = list(mongo.db.categories.find().sort("category_name", 1))
@@ -152,6 +153,40 @@ def complete_task(task_id):
 def get_categories():
     categories = list(mongo.db.categories.find().sort("category_name", 1))
     return render_template("categories.html", categories=categories)
+
+
+@app.route("/add_category", methods=["GET", "POST"])
+def add_category():
+    if request.method == "POST":
+        submit = {
+            "category_name": request.form.get("category_name")
+        }
+        mongo.db.categories.insert_one(submit)
+        flash("Category added successfully")
+        return redirect(url_for("get_categories"))
+
+    return render_template("add_category.html")
+
+
+@app.route("/edit_category/<category_id>", methods=["GET", "POST"])
+def edit_category(category_id):
+    if request.method == "POST":
+        submit = {
+            "category_name": request.form.get("category_name")
+        }
+        mongo.db.categories.update_one({"_id": ObjectId(category_id)}, {"$set": submit})
+        flash("Category Successfully Updated")
+        return redirect(url_for("get_categories"))
+
+    category = mongo.db.categories.find_one({"_id": ObjectId(category_id)})
+    return render_template("edit_category.html", category=category)
+
+
+@app.route("/delete_category/<category_id>")
+def delete_category(category_id):
+    mongo.db.categories.delete_one({"_id": ObjectId(category_id)})
+    flash("Category deleted")
+    return redirect(url_for("get_categories"))
 
 
 if __name__ == "__main__":
